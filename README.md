@@ -1,17 +1,20 @@
-## Entry 02 – Django Application Configuration
+# FileGuard
 
-**Prompt:**
+Secure Document Sharing and Access Control System.
 
-Explain how to configure multiple Django applications within a single project. Describe the purpose of INSTALLED_APPS and how Django discovers application models.
+## Technology Stack
+- Python
+- Django
+- SQLite (initial development database)
+- HTML
+- CSS
+- Bootstrap
 
-**My Review:**
+## Django Applications
+- accounts: User authentication and profiles
+- documents: Document management and permissions
+- audit: Activity tracking
 
-Configured accounts, documents and audit as separate Django applications.
-
-**Verification:**
-
-Executed `python manage.py check`.
-
-**Result:**
-
-[Replace this with the actual command output.]
+## Project Status
+- Initial Django project setup completed.
+- Django applications configured.
