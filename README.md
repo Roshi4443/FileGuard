@@ -12,13 +12,26 @@ FileGuard is a Django-based document management application designed to provide 
 - Bootstrap
 
 ## Implemented Features
+
 - User registration and authentication
 - Protected user dashboard
-- Document upload with a 10 MB size limit
+- Document upload with 10 MB size limit
 - File extension filtering
 - Private document storage backend
 - Owner-specific document listing
-- Owner-only protected document downloads
+- Owner-only document downloads
+- Document sharing between registered users
+- READ and EDIT permission assignment
+- Shared document listing for recipients
+- Permission-checked downloads for shared documents
+
+  ## Pending Features
+
+- Document editing for EDIT permission
+- Access revocation testing
+- Audit logging
+- Additional security testing
+- Deployment
 
 ## Django Applications
 - `accounts` – User registration, login and authentication
