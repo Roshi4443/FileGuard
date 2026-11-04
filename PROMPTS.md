@@ -125,3 +125,23 @@ Owner-only document download tested successfully.
 
 ### Prompt Summary
 Implement
+
+### 8. Audit Logging Architecture
+**Prompt:** Design an audit logging system in Django to record document uploads, downloads, sharing, and access revocation.
+
+**Implementation:** Created an AuditLog model with actor, document, target user, action, details, and timestamp fields.
+
+### 9. Audit Log Administration
+**Prompt:** Configure Django Admin to display audit records with filters and search while preventing normal admin-interface modifications.
+
+**Implementation:** Registered AuditLog with read-only admin configuration.
+
+### 10. Document Activity Integration
+**Prompt:** Integrate audit logging into document upload, download, sharing, and permission revocation views.
+
+**Implementation:** Added a reusable logging function and connected it to the document operations.
+
+### 11. Security Threat Model
+**Prompt:** Document FileGuard's security threats, implemented mitigations, manual tests, and remaining limitations.
+
+**Implementation:** Updated THREATS.md to describe access control, private storage, revocation, upload restrictions, and audit logging.
