@@ -1,0 +1,491 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileGuard | Secure Document Sharing</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f8fafc;
+            color: #172033;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: #ffffff;
+            border-bottom: 1px solid #e5eaf2;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 800;
+            color: #173b75;
+        }
+
+        .logo span {
+            color: #2878e5;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .nav-links a:hover {
+            color: #2878e5;
+        }
+
+        .nav-button {
+            background: #2563eb;
+            color: white !important;
+            padding: 10px 19px;
+            border-radius: 8px;
+        }
+
+        .hero {
+            padding: 95px 8% 85px;
+            background: linear-gradient(120deg, #102b55, #1d4e89);
+            color: white;
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            padding: 7px 14px;
+            border: 1px solid #7da9e8;
+            border-radius: 30px;
+            color: #dbeafe;
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 5vw, 58px);
+            line-height: 1.15;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 span {
+            color: #79b5ff;
+        }
+
+        .hero p {
+            color: #dbeafe;
+            font-size: 17px;
+            max-width: 620px;
+            margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 13px 23px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #173b75;
+        }
+
+        .btn-secondary {
+            color: white;
+            border: 1px solid #9bbce8;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .hero-visual {
+            background: rgba(255,255,255,0.09);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 22px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .shield {
+            font-size: 95px;
+            margin-bottom: 15px;
+        }
+
+        .hero-visual h3 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .hero-visual p {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .section {
+            padding: 75px 8%;
+        }
+
+        .section-heading {
+            text-align: center;
+            max-width: 680px;
+            margin: 0 auto 45px;
+        }
+
+        .section-heading h2 {
+            font-size: 34px;
+            color: #173b75;
+            margin-bottom: 12px;
+        }
+
+        .section-heading p {
+            color: #64748b;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border: 1px solid #e5eaf2;
+            border-radius: 15px;
+            transition: 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(30, 64, 120, 0.09);
+        }
+
+        .feature-icon {
+            width: 55px;
+            height: 55px;
+            display: grid;
+            place-items: center;
+            background: #eaf2ff;
+            border-radius: 12px;
+            font-size: 27px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            color: #173b75;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .workflow {
+            background: #edf4ff;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            text-align: center;
+        }
+
+        .step {
+            padding: 25px;
+        }
+
+        .step-number {
+            width: 52px;
+            height: 52px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        .step h3 {
+            color: #173b75;
+            margin-bottom: 8px;
+        }
+
+        .step p {
+            color: #64748b;
+        }
+
+        .cta {
+            text-align: center;
+            padding: 65px 8%;
+            background: #173b75;
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .cta p {
+            color: #dbeafe;
+            margin-bottom: 25px;
+        }
+
+        .footer {
+            background: #0d1e38;
+            color: #cbd5e1;
+            text-align: center;
+            padding: 25px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 800px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding-top: 65px;
+            }
+
+            .features,
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 18px 5%;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .nav-links {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+
+            .section {
+                padding: 55px 6%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero-visual {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="logo">
+            File<span>Guard</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="nav-button">
+                    Dashboard
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}" class="nav-button">
+                    Get Started
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div>
+            <div class="hero-tag">🔒 Secure Document Management</div>
+
+            <h1>
+                Your Documents.<br>
+                Your Control.<br>
+                <span>Your Security.</span>
+            </h1>
+
+            <p>
+                FileGuard is a secure document-sharing platform that helps
+                you store, share, edit and control access to important files
+                with permission-based security and activity tracking.
+            </p>
+
+            <div class="hero-buttons">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary">
+                        Open Dashboard →
+                    </a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-primary">
+                        Get Started →
+                    </a>
+
+                    <a href="{% url 'login' %}" class="btn btn-secondary">
+                        Sign In
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="shield">🛡️</div>
+            <h3>Security Through Control</h3>
+            <p>
+                Share documents with controlled permissions
+                and track important document activities.
+            </p>
+        </div>
+    </section>
+
+    <section class="section" id="features">
+        <div class="section-heading">
+            <h2>Everything Your Documents Need</h2>
+            <p>
+                Manage document access with clear permissions,
+                private storage and activity records.
+            </p>
+        </div>
+
+        <div class="features">
+
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <h3>Access Control</h3>
+                <p>
+                    Share documents with READ or EDIT permissions.
+                    Only authorized users can access protected documents.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📁</div>
+                <h3>Private File Storage</h3>
+                <p>
+                    Store uploaded documents outside the public media
+                    directory and serve them through permission-checked views.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>Activity Audit Logs</h3>
+                <p>
+                    Record important activities such as document uploads,
+                    downloads, sharing, revocation and editing.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="section workflow" id="how-it-works">
+        <div class="section-heading">
+            <h2>How FileGuard Works</h2>
+            <p>
+                A straightforward workflow for secure document sharing.
+            </p>
+        </div>
+
+        <div class="steps">
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Upload</h3>
+                <p>
+                    Upload your document to your private document space.
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Share</h3>
+                <p>
+                    Select a recipient and grant READ or EDIT permission.
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Control</h3>
+                <p>
+                    Manage permissions, revoke access and review activity logs.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>Take Control of Your Documents</h2>
+        <p>
+            Start managing and sharing documents with permission-based access.
+        </p>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="btn btn-primary">
+                Go to Dashboard
+            </a>
+        {% else %}
+            <a href="{% url 'register' %}" class="btn btn-primary">
+                Create Your Account
+            </a>
+        {% endif %}
+    </section>
+
+    <footer class="footer">
+        <p>© 2026 FileGuard. Secure Document Sharing and Access Control System.</p>
+        <p>Built with Django and Python.</p>
+    </footer>
+
+</body>
+</html>
