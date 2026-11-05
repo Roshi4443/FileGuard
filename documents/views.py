@@ -55,6 +55,7 @@ def upload_document(request):
                 request,
                 "Document uploaded successfully."
             )
+
             return redirect('document_list')
 
     else:
@@ -120,6 +121,10 @@ def edit_document(request, document_id):
         return messages_permission_denied(request)
 
     if request.method == 'POST':
+
+        old_file_name = document.file.name
+        old_storage = document.file.storage
+
         form = DocumentUploadForm(
             request.POST,
             request.FILES,
@@ -129,12 +134,21 @@ def edit_document(request, document_id):
         if form.is_valid():
             updated_document = form.save()
 
+            new_file_name = updated_document.file.name
+
             log_activity(
                 actor=request.user,
                 action='EDIT',
                 document=updated_document,
                 details='Document title or file updated.'
             )
+
+            # Delete the old file only if a replacement was uploaded.
+            if (
+                old_file_name
+                and old_file_name != new_file_name
+            ):
+                old_storage.delete(old_file_name)
 
             messages.success(
                 request,
@@ -161,6 +175,7 @@ def messages_permission_denied(request):
         request,
         "You do not have permission to access this document."
     )
+
     return redirect('document_list')
 
 
