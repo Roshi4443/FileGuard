@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -9,6 +10,7 @@ class AuditLog(models.Model):
         ('DOWNLOAD', 'Document Downloaded'),
         ('SHARE', 'Document Shared'),
         ('REVOKE', 'Access Revoked'),
+        ('EDIT', 'Document Edited'),
     ]
 
     actor = models.ForeignKey(
