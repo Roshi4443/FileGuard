@@ -268,3 +268,204 @@ class DocumentUploadValidationTests(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertIn('file', form.errors)
+
+
+class DocumentEditPermissionTests(TestCase):
+
+    def setUp(self):
+        self.owner = User.objects.create_user(
+            username='edit_owner',
+            password='TestPassword123'
+        )
+
+        self.editor = User.objects.create_user(
+            username='editor',
+            password='TestPassword123'
+        )
+
+        self.reader = User.objects.create_user(
+            username='reader',
+            password='TestPassword123'
+        )
+
+        self.unauthorized = User.objects.create_user(
+            username='edit_unauthorized',
+            password='TestPassword123'
+        )
+
+        uploaded_file = SimpleUploadedFile(
+            'original.txt',
+            b'Original document content.',
+            content_type='text/plain'
+        )
+
+        self.document = Document.objects.create(
+            owner=self.owner,
+            title='Original Document',
+            file=uploaded_file
+        )
+
+    def test_owner_can_edit_document(self):
+        self.client.login(
+            username='edit_owner',
+            password='TestPassword123'
+        )
+
+        response = self.client.post(
+            reverse('edit_document', args=[self.document.id]),
+            {
+                'title': 'Updated by Owner'
+            }
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        self.document.refresh_from_db()
+
+        self.assertEqual(
+            self.document.title,
+            'Updated by Owner'
+        )
+
+    def test_edit_permission_user_can_edit_document(self):
+        DocumentPermission.objects.create(
+            document=self.document,
+            user=self.editor,
+            permission='EDIT',
+            granted_by=self.owner
+        )
+
+        self.client.login(
+            username='editor',
+            password='TestPassword123'
+        )
+
+        response = self.client.post(
+            reverse('edit_document', args=[self.document.id]),
+            {
+                'title': 'Updated by Editor'
+            }
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        self.document.refresh_from_db()
+
+        self.assertEqual(
+            self.document.title,
+            'Updated by Editor'
+        )
+
+    def test_read_permission_user_cannot_edit_document(self):
+        DocumentPermission.objects.create(
+            document=self.document,
+            user=self.reader,
+            permission='READ',
+            granted_by=self.owner
+        )
+
+        self.client.login(
+            username='reader',
+            password='TestPassword123'
+        )
+
+        response = self.client.get(
+            reverse('edit_document', args=[self.document.id])
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        self.document.refresh_from_db()
+
+        self.assertEqual(
+            self.document.title,
+            'Original Document'
+        )
+
+    def test_unauthorized_user_cannot_edit_document(self):
+        self.client.login(
+            username='edit_unauthorized',
+            password='TestPassword123'
+        )
+
+        response = self.client.get(
+            reverse('edit_document', args=[self.document.id])
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        self.document.refresh_from_db()
+
+        self.assertEqual(
+            self.document.title,
+            'Original Document'
+        )
+
+    def test_edit_creates_audit_log(self):
+        from audit.models import AuditLog
+
+        self.client.login(
+            username='edit_owner',
+            password='TestPassword123'
+        )
+
+        response = self.client.post(
+            reverse('edit_document', args=[self.document.id]),
+            {
+                'title': 'Audit Test Document'
+            }
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        self.assertTrue(
+            AuditLog.objects.filter(
+                actor=self.owner,
+                document=self.document,
+                action='EDIT'
+            ).exists()
+        )
+
+    def test_edit_permission_user_can_replace_file(self):
+        DocumentPermission.objects.create(
+            document=self.document,
+            user=self.editor,
+            permission='EDIT',
+            granted_by=self.owner
+        )
+
+        self.client.login(
+            username='editor',
+            password='TestPassword123'
+        )
+
+        replacement_file = SimpleUploadedFile(
+            'replacement.txt',
+            b'Replacement document content.',
+            content_type='text/plain'
+        )
+
+        response = self.client.post(
+            reverse('edit_document', args=[self.document.id]),
+            {
+                'title': 'Replaced Document',
+                'file': replacement_file
+            }
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        self.document.refresh_from_db()
+
+        self.assertEqual(
+            self.document.title,
+            'Replaced Document'
+        )
+
+        with self.document.file.open('rb') as saved_file:
+            saved_content = saved_file.read()
+
+        self.assertEqual(
+            saved_content,
+            b'Replacement document content.'
+        )
