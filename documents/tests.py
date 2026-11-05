@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from .models import Document, DocumentPermission
+from .forms import DocumentUploadForm
 
 
 class DocumentSecurityTests(TestCase):
@@ -190,3 +191,80 @@ class DocumentSecurityTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+
+class DocumentUploadValidationTests(TestCase):
+
+    def test_valid_text_file_is_accepted(self):
+        uploaded_file = SimpleUploadedFile(
+            'valid.txt',
+            b'Valid UTF-8 document.',
+            content_type='text/plain'
+        )
+
+        form = DocumentUploadForm(
+            data={'title': 'Valid Document'},
+            files={'file': uploaded_file}
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_unsupported_file_extension_is_rejected(self):
+        uploaded_file = SimpleUploadedFile(
+            'malicious.exe',
+            b'Test content',
+            content_type='application/octet-stream'
+        )
+
+        form = DocumentUploadForm(
+            data={'title': 'Invalid Document'},
+            files={'file': uploaded_file}
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('file', form.errors)
+
+    def test_fake_pdf_file_is_rejected(self):
+        uploaded_file = SimpleUploadedFile(
+            'fake.pdf',
+            b'This is not a real PDF file.',
+            content_type='application/pdf'
+        )
+
+        form = DocumentUploadForm(
+            data={'title': 'Fake PDF'},
+            files={'file': uploaded_file}
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('file', form.errors)
+
+    def test_empty_file_is_rejected(self):
+        uploaded_file = SimpleUploadedFile(
+            'empty.txt',
+            b'',
+            content_type='text/plain'
+        )
+
+        form = DocumentUploadForm(
+            data={'title': 'Empty Document'},
+            files={'file': uploaded_file}
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('file', form.errors)
+
+    def test_file_over_10mb_is_rejected(self):
+        uploaded_file = SimpleUploadedFile(
+            'large.txt',
+            b'A' * (10 * 1024 * 1024 + 1),
+            content_type='text/plain'
+        )
+
+        form = DocumentUploadForm(
+            data={'title': 'Large Document'},
+            files={'file': uploaded_file}
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('file', form.errors)
