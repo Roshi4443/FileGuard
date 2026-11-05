@@ -101,6 +101,61 @@ def download_document(request, document_id):
     )
 
 
+@login_required
+def edit_document(request, document_id):
+    document = get_object_or_404(
+        Document,
+        id=document_id
+    )
+
+    is_owner = document.owner_id == request.user.id
+
+    edit_permission = DocumentPermission.objects.filter(
+        document=document,
+        user=request.user,
+        permission='EDIT'
+    ).exists()
+
+    if not (is_owner or edit_permission):
+        return messages_permission_denied(request)
+
+    if request.method == 'POST':
+        form = DocumentUploadForm(
+            request.POST,
+            request.FILES,
+            instance=document
+        )
+
+        if form.is_valid():
+            updated_document = form.save()
+
+            log_activity(
+                actor=request.user,
+                action='EDIT',
+                document=updated_document,
+                details='Document title or file updated.'
+            )
+
+            messages.success(
+                request,
+                'Document updated successfully.'
+            )
+
+            return redirect('document_list')
+
+    else:
+        form = DocumentUploadForm(instance=document)
+
+    return render(
+        request,
+        'documents/edit.html',
+        {
+            'form': form,
+            'document': document
+        }
+    )
+
+
 def messages_permission_denied(request):
     messages.error(
         request,
