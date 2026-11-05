@@ -1,4 +1,6 @@
 
+import os
+
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -469,3 +471,32 @@ class DocumentEditPermissionTests(TestCase):
             saved_content,
             b'Replacement document content.'
         )
+
+    def test_old_file_is_deleted_after_replacement(self):
+        old_file_name = self.document.file.name
+        old_file_path = self.document.file.path
+
+        self.client.force_login(self.owner)
+
+        response = self.client.post(
+            reverse('edit_document', args=[self.document.id]),
+            {
+                'title': 'Updated Document',
+                'file': SimpleUploadedFile(
+                    'replacement.txt',
+                    b'New replacement content.',
+                    content_type='text/plain'
+                )
+            }
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        self.document.refresh_from_db()
+
+        self.assertNotEqual(
+            self.document.file.name,
+            old_file_name
+        )
+
+        self.assertFalse(os.path.exists(old_file_path))
